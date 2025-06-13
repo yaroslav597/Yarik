@@ -6,10 +6,10 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import ProductCard from '../components/ui/ProductCard';
 import Button from '../components/ui/Button';
-import { getBestSellers, getNewArrivals, getSaleItems, categories } from '../data/products';
-import { motion } from 'framer-motion';
 import RegisterModal from '../components/ui/RegisterModal';
 import LoginModal from '../components/ui/LoginModal';
+import { getBestSellers, getNewArrivals, getSaleItems, categories } from '../data/products';
+import { motion } from 'framer-motion';
 
 const HomePage: React.FC = () => {
   const bestSellers = getBestSellers();

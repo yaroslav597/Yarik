@@ -29,13 +29,22 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
+// Логирование входящих запросов
+app.use((req, res, next) => {
+  console.log(`Incoming request: ${req.method} ${req.url}`);
+  next();
+});
+
 // Настройка подключения к базе данных PostgreSQL
 const pool = new Pool({
-  host: process.env.DB_HOST,
+  host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
-  database: process.env.DB_NAME,
-  user: process.env.DB_USER,
-  password: String(process.env.DB_PASSWORD), // Преобразование пароля в строку
+  database: process.env.DB_NAME || 'FishShop_db',
+  user: process.env.DB_USER || 'postgres',
+  password: process.env.DB_PASSWORD || '6905',
+  max: 10,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
 });
 
 // Маршрут для проверки работы сервера
@@ -70,6 +79,8 @@ app.post('/api/register', async (req, res) => {
       [username, email, hashedPassword]
     );
 
+    console.log('Пользователь успешно добавлен в базу данных');
+
     res.status(201).json({ message: 'Пользователь успешно зарегистрирован' });
   } catch (error) {
     console.error('Ошибка при регистрации пользователя:', error);
@@ -90,7 +101,6 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// Маршрут входа пользователя
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -99,13 +109,11 @@ app.post('/api/login', async (req, res) => {
   }
 
   try {
-    // Проверка существования пользователя
     const user = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     if (user.rows.length === 0) {
       return res.status(404).json({ message: 'Пользователь не найден' });
     }
 
-    // Проверка пароля
     const isPasswordValid = await bcrypt.compare(password, user.rows[0].password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Неверный пароль' });
@@ -113,18 +121,8 @@ app.post('/api/login', async (req, res) => {
 
     res.status(200).json({ message: 'Вход выполнен успешно', user: user.rows[0] });
   } catch (error) {
-    console.error(error);
+    console.error('Ошибка при входе пользователя:', error);
     res.status(500).json({ message: 'Ошибка сервера' });
-  }
-});
-
-app.get('/api/dbtest', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT 1');
-    res.status(200).json({ message: 'Подключение к базе данных успешно', result: result.rows });
-  } catch (error) {
-    console.error('Ошибка подключения к базе данных:', error);
-    res.status(500).json({ message: 'Ошибка подключения к базе данных', error: error.message });
   }
 });
 

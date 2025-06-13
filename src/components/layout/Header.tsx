@@ -5,6 +5,8 @@ import { useCart } from '../../context/CartContext';
 import { categories } from '../../data/products';
 import Logo from '../ui/Logo';
 
+import UserProfileButton from '../ui/UserProfileButton';
+
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -95,20 +97,21 @@ const Header: React.FC = () => {
 
           {/* Cart and Mobile Menu Toggle */}
           <div className="flex items-center space-x-5">
-            <button className="text-blue-900 hover:text-blue-700">
-              <Search className="h-6 w-6" />
-            </button>
-            <Link to="/cart" className="text-blue-900 hover:text-blue-700 relative">
-              <ShoppingCart className="h-6 w-6" />
-              {itemCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                  {itemCount}
-                </span>
-              )}
-            </Link>
-            <button className="lg:hidden text-blue-900" onClick={toggleMenu}>
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
+          <button className="text-blue-900 hover:text-blue-700">
+            <Search className="h-6 w-6" />
+          </button>
+          <Link to="/cart" className="text-blue-900 hover:text-blue-700 relative">
+            <ShoppingCart className="h-6 w-6" />
+            {itemCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                {itemCount}
+              </span>
+            )}
+          </Link>
+          <UserProfileButton />
+        <button className="lg:hidden text-blue-900" onClick={toggleMenu}>
+            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
           </div>
         </div>
       </div>
